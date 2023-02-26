@@ -1,42 +1,47 @@
-const inputs = document.querySelectorAll('.input');
-const btnsPrev = document.querySelectorAll('.btn-prev');
-const btnsNext = document.querySelectorAll('.btn-next');
+const inputFields = document.querySelectorAll('.input');
+const prevButtons = document.querySelectorAll('.btn-prev');
+const nextButtons = document.querySelectorAll('.btn-next');
 
+inputFields.forEach((input, i) => {
+    inputHistory(input, prevButtons[i], nextButtons[i]);
+});
 
-for (let i = 0; i < inputs.length; i++) {
-    inputs[i].addEventListener('change', function () {
-        let inputHistory = [];
+function inputHistory(input, prevButtons, nextButtons) {
+    let inputHistory = [];
+    let currentEl = -1;
 
-        return function () {
-            inputHistory.push(this.value);
+    input.addEventListener('change', function () {
+        inputHistory.push(this.value);
+        currentEl = inputHistory.length - 1;
 
-            let currentEl = inputHistory.length - 1;
+        if (inputHistory.length >= 2) {
+            prevButtons.disabled = false;
+        }
 
-            if (inputHistory.length >= 2) {
-                btnsPrev[i].disabled = false;
-            }
+        nextButtons.disabled = true;
+    });
 
-            btnsPrev[i].addEventListener('click', () => {
-                btnsNext[i].disabled = false;
-                
-                if (currentEl > 0) {
-                    currentEl--;
-                    inputs[i].value = inputHistory[currentEl];
-                }
-            });
+    prevButtons.addEventListener('click', function () {
+        if (currentEl === 1) {
+            prevButtons.disabled = true;
+        }
 
-            btnsNext[i].addEventListener('click', () => {
-                btnsPrev[i].disabled = false;
+        if (currentEl > 0) {
+            currentEl--;
+            input.value = inputHistory[currentEl];
+            nextButtons.disabled = false;
+        }
+    });
 
-                if (currentEl === inputHistory.length - 2) {
-                    btnsNext[i].disabled = true;
-                }
+    nextButtons.addEventListener('click', function () {
+        if (currentEl === inputHistory.length - 2) {
+            nextButtons.disabled = true;
+        }
 
-                if (currentEl < inputHistory.length - 1) {
-                    currentEl++;
-                    inputs[i].value = inputHistory[currentEl];
-                }
-            });
-        };
-    }());
+        if (currentEl < inputHistory.length - 1) {
+            currentEl++;
+            input.value = inputHistory[currentEl];
+            prevButtons.disabled = false;
+        }
+    });
 }
