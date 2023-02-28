@@ -1,47 +1,65 @@
 const inputWrappers = document.querySelectorAll('[data-input-wrapper]');
 
+const direction = {
+    PREV: 'prev',
+    NEXT: 'next',
+}
+
 inputWrappers.forEach(inputWrapper => {
-    const [inputField, prevButton, nextButton] = inputWrapper.querySelectorAll('[data-input], [data-prev-btn], [data-next-btn]');
+    const inputField = inputWrapper.querySelector('[data-input]');
+    const prevButton = inputWrapper.querySelector('[data-prev-btn]');
+    const nextButton = inputWrapper.querySelector('[data-next-btn]');
 
-    const manager = inputHistoryManager(inputField, prevButton, nextButton);
+    const { addToHistory, btnAction } = inputHistoryManager(inputField, prevButton, nextButton);
 
-    if (inputField) {
-        inputField.addEventListener('change', () => manager.addToHistory());
-    };
+    const inputHandler = () => addToHistory();
+    const btnPrevHandler = () => btnAction(direction.PREV);
+    const btnNextHandler = () => btnAction(direction.NEXT);
 
-    if (prevButton) {
-        prevButton.addEventListener('click', () => manager.show('previous'));
-    };
-
-    if (nextButton) {
-        nextButton.addEventListener('click', () => manager.show('next'));
-    };
+    inputField?.addEventListener('change', inputHandler);
+    prevButton?.addEventListener('click', btnPrevHandler);
+    nextButton?.addEventListener('click', btnNextHandler);
 });
 
 function inputHistoryManager(input, prevButton, nextButton) {
     let inputHistory = [];
     let currentEl;
 
+    const prev = () => {
+        currentEl--;
+        nextButton.disabled = false;
+    }
+
+    const next = () => {
+        currentEl++;
+        prevButton.disabled = false;
+    }
+
+    const show = () => {
+        input.value = inputHistory[currentEl];
+    }
+
+    const disableBtn = () => {
+        prevButton.disabled = currentEl === 0;
+        nextButton.disabled = currentEl === inputHistory.length - 1;
+    }
+
+    const option = {
+        [direction.PREV]: prev,
+        [direction.NEXT]: next,
+    }
+
     return {
-        addToHistory: function () {
+        addToHistory() {
             inputHistory.push(input.value);
             currentEl = inputHistory.length - 1;
 
             prevButton.disabled = !(inputHistory.length >= 2);
         },
-        show: (direction) => {
-            if (direction === 'previous') {
-                currentEl--;
-                nextButton.disabled = false;
-            } else if (direction === 'next') {
-                currentEl++;
-                prevButton.disabled = false;
-            }
-
-            input.value = inputHistory[currentEl];
-
-            prevButton.disabled = currentEl === 0;
-            nextButton.disabled = currentEl === inputHistory.length - 1;
+        btnAction(direction) {
+            option[direction]();
+            show();
+            disableBtn();
         }
     };
 }
