@@ -1,0 +1,18 @@
+.input-with-history {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px #00000033;
+}
+
+.input-with-history__input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.input-with-history__btn-container {
+    display: flex;
+    justify-content: space-between;
+}
