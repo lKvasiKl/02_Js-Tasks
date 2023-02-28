@@ -1,14 +1,14 @@
-const inputWrappers = document.querySelectorAll('[data-input-wrapper]');
+const inputsWithHistory = document.querySelectorAll('[data-input-with-history]');
 
 const direction = {
     PREV: 'prev',
     NEXT: 'next',
 }
 
-inputWrappers.forEach(inputWrapper => {
-    const inputField = inputWrapper.querySelector('[data-input]');
-    const prevButton = inputWrapper.querySelector('[data-prev-btn]');
-    const nextButton = inputWrapper.querySelector('[data-next-btn]');
+inputsWithHistory.forEach(inputWithHistory => {
+    const inputField = inputWithHistory.querySelector('[data-input]');
+    const prevButton = inputWithHistory.querySelector('[data-prev-btn]');
+    const nextButton = inputWithHistory.querySelector('[data-next-btn]');
 
     const { addToHistory, btnAction } = inputHistoryManager(inputField, prevButton, nextButton);
 
@@ -35,7 +35,7 @@ function inputHistoryManager(input, prevButton, nextButton) {
         prevButton.disabled = false;
     }
 
-    const show = () => {
+    const updateValue = () => {
         input.value = inputHistory[currentEl];
     }
 
@@ -58,8 +58,8 @@ function inputHistoryManager(input, prevButton, nextButton) {
         },
         btnAction(direction) {
             option[direction]();
-            show();
+            updateValue();
             disableBtn();
-        }
+        },
     };
 }
